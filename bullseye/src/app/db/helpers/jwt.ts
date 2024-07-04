@@ -8,7 +8,7 @@ const signToken = (payload: JwtPayload) => {
 };
 
 const verifyToken = (token: string) => {
-  return jwt.sign(token, secret);
+  return jwt.verify(token, secret);
 };
 
 const readPayloadJose = async <T>(token: string) => {
