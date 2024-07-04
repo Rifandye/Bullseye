@@ -68,6 +68,12 @@ class WishlistModel {
 
     return wishlist;
   }
+
+  static async deleteWishlist(id: string): Promise<void> {
+    await this.getCollection().deleteOne({
+      _id: new ObjectId(id),
+    });
+  }
 }
 
 export default WishlistModel;
