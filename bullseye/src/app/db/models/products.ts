@@ -31,6 +31,16 @@ class ProductModel {
 
     return data as Product[];
   }
+
+  static async getProductBySlug(slug: string): Promise<Product> {
+    const product = await this.getCollection().findOne({ slug: slug });
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    return product as Product;
+  }
 }
 
 export default ProductModel;
