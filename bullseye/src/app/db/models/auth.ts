@@ -1,7 +1,8 @@
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { getCollection } from "../config/db";
-import { hashPass } from "../helpers/bcrypt";
+import { comparePass, hashPass } from "../helpers/bcrypt";
+import { signToken } from "../helpers/jwt";
 
 type User = {
   _id: ObjectId;
@@ -10,10 +11,16 @@ type User = {
 };
 
 type NewUserInput = Omit<User, "_id">;
+type UserLoginInput = Omit<User, "_id">;
 
 const UserInputSchema = z.object({
   username: z.string({ required_error: "Username is required" }).min(5).max(10),
   password: z.string({ required_error: "Password is required" }).min(5).max(10),
+});
+
+const LoginInputSchema = z.object({
+  username: z.string(),
+  password: z.string(),
 });
 
 class UserModel {
@@ -40,6 +47,35 @@ class UserModel {
       ...newUser,
       password: hashPass(newUser.password),
     });
+  }
+
+  static async login(loginInput: UserLoginInput): Promise<string> {
+    const parseResult = LoginInputSchema.safeParse(loginInput);
+
+    if (!parseResult.success) {
+      throw parseResult.error;
+    }
+
+    const user = await this.getCollection().findOne({
+      username: loginInput.username,
+    });
+
+    if (!user) {
+      throw new Error("Invalid username/password");
+    }
+
+    const comparedPass = comparePass(loginInput.password, user.password);
+
+    if (!comparedPass) {
+      throw new Error("Invalid username/password");
+    }
+
+    const access_token = signToken({
+      id: user._id.toString(),
+      username: user.username,
+    });
+
+    return access_token;
   }
 }
 
