@@ -27,6 +27,53 @@ class WishlistModel {
       ...wishlistInput,
     };
   }
+
+  static async getAllWishList(userId: string) {
+    const agg = [
+      {
+        $match: {
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userDetail",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetail",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          "userDetail.password": 0,
+        },
+      },
+      {
+        $lookup: {
+          from: "Products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productDetail",
+        },
+      },
+    ];
+
+    const wishlist = await this.getCollection().aggregate(agg).toArray();
+
+    return wishlist;
+  }
+
+  static async deleteWishlist(id: string): Promise<void> {
+    await this.getCollection().deleteOne({
+      _id: new ObjectId(id),
+    });
+  }
 }
 
 export default WishlistModel;
