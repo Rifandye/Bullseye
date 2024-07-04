@@ -1,15 +1,15 @@
-import LoginBackground from "@/components/LoginBackground";
-import { cookies } from "next/headers";
+import RegisterBackground from "@/components/RegisterBackground";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default function LoginPage() {
-  const handleLogin = async (formData: FormData) => {
+export default function RegsiterPage() {
+  const handleRegister = async (formData: FormData) => {
     "use server";
+
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
-    const response = await fetch("http://localhost:3000/api/auth/login", {
+    const response = await fetch("http://localhost:3000/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,20 +17,15 @@ export default function LoginPage() {
       body: JSON.stringify({ username, password }),
     });
 
-    console.log(response);
+    await response.json();
 
-    const result = await response.json();
-    console.log(result);
-
-    cookies().set("Authorization", `Bearer ${result.access_token}`);
-
-    return redirect("/");
+    return redirect("/login");
   };
 
   return (
     <main className="flex items-center justify-center h-screen">
-      <LoginBackground />
-      <form action={handleLogin}>
+      <RegisterBackground />
+      <form action={handleRegister}>
         <div className="bg-[#171717] w-[400px] h-[500px] rounded-[20px]">
           <div className="flex justify-evenly items-center flex-col h-full">
             <div className="h-[60%] w-full flex justify-center items-center text-lg font-bold text-white gap-2">
@@ -63,14 +58,14 @@ export default function LoginPage() {
                   className="bg-[#252525] hover:bg-[#303030] text-white h-[40px] w-[150px] rounded-xl"
                   style={{ transition: "0.4s ease-in-out" }}
                 >
-                  Login
+                  Register
                 </button>
               </div>
               <div className="text-sm text-white">
                 <p>
-                  Don't have an accout?{" "}
-                  <Link href="/register">
-                    <span className="underline">Register</span>
+                  Already have an accout?{" "}
+                  <Link href="/login">
+                    <span className="underline">Login</span>
                   </Link>
                 </p>
               </div>
