@@ -23,3 +23,21 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const userId = request.headers.get("x-id-user") as string;
+    const wishlist = await WishlistModel.getAllWishList(userId);
+
+    return NextResponse.json(wishlist);
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}

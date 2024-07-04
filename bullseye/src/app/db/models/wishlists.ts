@@ -27,6 +27,47 @@ class WishlistModel {
       ...wishlistInput,
     };
   }
+
+  static async getAllWishList(userId: string) {
+    const agg = [
+      {
+        $match: {
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userDetail",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetail",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          "userDetail.password": 0,
+        },
+      },
+      {
+        $lookup: {
+          from: "Products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productDetail",
+        },
+      },
+    ];
+
+    const wishlist = await this.getCollection().aggregate(agg).toArray();
+
+    return wishlist;
+  }
 }
 
 export default WishlistModel;
