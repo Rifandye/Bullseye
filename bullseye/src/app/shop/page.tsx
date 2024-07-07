@@ -1,11 +1,12 @@
+import CardProduct from "@/components/CardProduct";
 import Navbar from "@/components/NavbarComponent";
 
-export default function ShopPage() {
+export default async function ShopPage() {
   return (
     <>
       <Navbar />
       <main>
-        <div>this is shop page</div>
+        <CardProduct />
       </main>
     </>
   );
