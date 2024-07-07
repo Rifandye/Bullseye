@@ -10,13 +10,6 @@ export default function Navbar() {
           <div className="h-full w-full flex justify-center items-center">
             <Image alt="logo" src={logo} height={220} width={220} />
           </div>
-          <div className="h-full w-full flex justify-center items-center">
-            <input
-              className="w-full h-9 text-sm text-white p-3 bg-transparent outline-none border border-[#fbfcf8] rounded-md"
-              type="search"
-              placeholder="Search"
-            />
-          </div>
           <div className="h-full w-full flex justify-center items-center gap-5">
             <Link href="/">
               <button>
